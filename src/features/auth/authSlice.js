@@ -21,6 +21,7 @@ export const authSlice = createSlice({
             state.value.email = null
             state.value.token = null
             state.value.localId = null
+            state.value.profilePicture = null
         },
         setProfilePicture: (state,action) => {
             state.value.profilePicture = action.payload

@@ -5,30 +5,61 @@ import { useState, useEffect } from 'react';
 import { setUser } from '../../features/auth/authSlice';
 import { useDispatch } from 'react-redux';
 import { useLoginMutation } from '../../services/authService';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { insertSession, clearSessions } from '../../db';
 
 const textInputWidth = Dimensions.get('window').width * 0.7
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
 
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [rememberMe, setRememberMe] = useState(false)
 
     const dispatch = useDispatch()
 
     const [triggerLogin, result] = useLoginMutation()
 
-    useEffect(()=>{
-        if(result.status==="rejected"){
+    /*useEffect(() => {
+        if (result.status === "rejected") {
             console.log("Error al iniciar sesión", result)
-        }else if(result.status==="fulfilled"){
+        } else if (result.status === "fulfilled") {
             console.log("Usuario logueado con éxito")
+            console.log(result.data)
             dispatch(setUser(result.data))
+            if(rememberMe){
+                insertSession(result.data)
+                    .then((result) => console.log("User saved successfully at the db", result))
+                    .catch((error) => console.log("User was not able to be saved at the db", error))
+            }
         }
-    },[result])
+    }, [result,rememberMe])*/
 
-    const onsubmit = ()=>{
+    useEffect(() => {
+        //result?.isSuccess
+        //console.log("Remember me: ", rememberMe)
+        if (result.isSuccess) {
+            console.log("Usuario logueado con éxito")
+            console.log(result.data)
+            dispatch(setUser(result.data))
+
+            if (rememberMe) {
+                clearSessions().then(() => console.log("sesiones eliminadas")).catch(error => console.log("Error al eliminar las sesiones: ", error))
+                insertSession({
+                    localId: result.data.localId,
+                    email: result.data.email,
+                    token: result.data.idToken
+                })
+                    .then(res => console.log("Usuario insertado con éxito", res))
+                    .catch(error => console.log("Error al insertar usuario", error))
+            }
+
+        }
+    }, [result, rememberMe])
+
+    const onsubmit = () => {
         //console.log(email,password)       
-        triggerLogin({email,password})
+        triggerLogin({ email, password })
     }
 
     return (
@@ -54,8 +85,19 @@ const LoginScreen = ({navigation}) => {
                     style={styles.textInput}
                     secureTextEntry
                 />
-
             </View>
+
+            <View style={styles.rememberMeContainer}>
+                <Text style={styles.whiteText}>Keep me logged in</Text>
+                {
+                    rememberMe
+                        ?
+                        <Pressable onPress={() => setRememberMe(!rememberMe)}><Icon name="toggle-on" size={48} color={colors.verdeNeon} /></Pressable>
+                        :
+                        <Pressable onPress={() => setRememberMe(!rememberMe)}><Icon name="toggle-off" size={48} color={colors.grisClaro} /></Pressable>
+                }
+            </View>
+
             <View style={styles.footTextContainer}>
                 <Text style={styles.whiteText}>Not a registered user?</Text>
                 <Pressable onPress={() => navigation.navigate('Signup')}>
@@ -74,8 +116,8 @@ const LoginScreen = ({navigation}) => {
 
             <View style={styles.guestOptionContainer}>
                 <Text style={styles.whiteText}>Don't want to sing up?</Text>
-                <Pressable onPress={()=>dispatch(setUser({email:"demo@mundogeek.com",token:"demo"}))}>
-                  <Text style={{ ...styles.whiteText, ...styles.strongText }}>Continue as guess</Text>
+                <Pressable onPress={() => dispatch(setUser({ email: "demo@mundogeek.com", token: "demo" }))}>
+                    <Text style={{ ...styles.whiteText, ...styles.strongText }}>Continue as guess</Text>
                 </Pressable>
             </View>
         </LinearGradient>
@@ -146,5 +188,12 @@ const styles = StyleSheet.create({
     guestOptionContainer: {
         alignItems: 'center',
         marginTop: 64
+    },
+    rememberMeContainer: {
+        flexDirection: "row",
+        gap: 5,
+        justifyContent: "space-around",
+        alignItems: "center",
+        marginVertical: 8,
     }
 })
