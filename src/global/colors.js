@@ -9,4 +9,5 @@ export const colors = {
     grisMedio:"#C6C6C6",
     grisClaro:"#EBEBEB",
     blanco:"#ffffff",
+    moradoClaro: "#6c4675",
 }

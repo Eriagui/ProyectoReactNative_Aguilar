@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, View, Image,Pressable } from 'react-native'
+import { FlatList, StyleSheet, Text, View, Image, Pressable } from 'react-native'
 import React from 'react'
 //import cart from '../data/cart.json'
 import { colors } from '../global/colors'
@@ -8,14 +8,15 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { usePostReceiptMutation } from '../services/receiptsService'
 import { clearCart } from '../features/cart/cartSlice'
+import { removeItem } from '../features/cart/cartSlice';
 
-const CartScreen = ({navigation}) => {
+const CartScreen = ({ navigation }) => {
 
-    const cart = useSelector(state=>state.cartReducer.value.cartItems)
-    const total = useSelector(state=>state.cartReducer.value.total)
+    const cart = useSelector(state => state.cartReducer.value.cartItems)
+    const total = useSelector(state => state.cartReducer.value.total)
     const [triggerPost, result] = usePostReceiptMutation()
 
-    const cartLength = useSelector(state=>state.cartReducer.value.cartLenght)
+    const cartLength = useSelector(state => state.cartReducer.value.cartLenght)
     //console.log(cartLength)
 
     const dispatch = useDispatch()
@@ -23,8 +24,8 @@ const CartScreen = ({navigation}) => {
     const FooterComponent = () => (
         <View style={styles.footerContainer}>
             <Text style={styles.footerTotal}>Total: $ {total} </Text>
-            <Pressable style={styles.confirmButton} onPress={()=>{
-                triggerPost({cart,total,createdAt: Date.now()})
+            <Pressable style={styles.confirmButton} onPress={() => {
+                triggerPost({ cart, total, createdAt: Date.now() })
                 dispatch(clearCart())
                 navigation.navigate("Receipts")
             }} >
@@ -32,6 +33,10 @@ const CartScreen = ({navigation}) => {
             </Pressable>
         </View>
     )
+
+    /*const removeFromCart = ({item}) => {
+        dispatch(removeItem({item}))
+    }*/
 
     const renderCartItem = ({ item }) => (
         <FlatCard style={styles.cartContainer}>
@@ -45,29 +50,36 @@ const CartScreen = ({navigation}) => {
             <View style={styles.cartDescription}>
                 <Text style={styles.title}>{item.title}</Text>
                 <Text style={styles.description}>{item.shortDescription}</Text>
-                <Text style={styles.price}>Precio unitario: $ {item.price}</Text>
-                <Text stlyle={styles.quantity}>Cantidad: {item.quantity}</Text>
+                <Text style={styles.price}>Price per unit: $ {item.price}</Text>
+                <Text stlyle={styles.quantity}>Quantity: {item.quantity}</Text>
                 <Text style={styles.total}>Total: $ {item.quantity * item.price}</Text>
-                <Icon name="delete" size={24} color="#FC7A5E" style={styles.trashIcon} />
+                <Pressable
+                    //onPress={removeFromCart(item)}
+                    onPress={() => dispatch(removeItem(item))}
+                    //onPress = {() => console.log({item})}
+                    >
+                    <Icon name="delete" size={24} color="#FC7A5E" style={styles.trashIcon} />
+                </Pressable>
+
             </View>
         </FlatCard>
     )
 
     return (
         <>
-        {
-        cartLength>0
-        ?
-        <FlatList
-            data={cart}
-            keyExtractor={item => item.id}
-            renderItem={renderCartItem}
-            ListHeaderComponent={<Text style={styles.cartScreenTitle}>Tu carrito:</Text>}
-            ListFooterComponent={<FooterComponent />}
-        />
-        :
-        <View style={styles.cartEmpty}><Text style={styles.cartEmptyText} >Aún no hay productos en el carrito</Text></View>
-        }
+            {
+                cartLength > 0
+                    ?
+                    <FlatList
+                        data={cart}
+                        keyExtractor={item => item.id}
+                        renderItem={renderCartItem}
+                        ListHeaderComponent={<Text style={styles.cartScreenTitle}>Your cart:</Text>}
+                        ListFooterComponent={<FooterComponent />}
+                    />
+                    :
+                    <View style={styles.cartEmpty}><Text style={styles.cartEmptyText} >There are no products in your cart</Text></View>
+            }
         </>
     )
 }
@@ -134,12 +146,12 @@ const styles = StyleSheet.create({
         textAlign: "center",
         paddingVertical: 8
     },
-    cartEmpty:{
-        flex:1,
-        justifyContent:'center',
+    cartEmpty: {
+        flex: 1,
+        justifyContent: 'center',
         alignItems: 'center'
     },
-    cartEmptyText:{
+    cartEmptyText: {
         fontSize: 16
     }
 

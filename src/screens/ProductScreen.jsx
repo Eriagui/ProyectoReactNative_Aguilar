@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View, Pressable, useWindowDimensions, Image, FlatList, ScrollView,ActivityIndicator } from 'react-native'
+import Toast from 'react-native-toast-message';
+import { StyleSheet, Text, View, Pressable, useWindowDimensions, Image, FlatList, ScrollView, ActivityIndicator } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors } from '../global/colors';
 //import products from '../data/products.json'
@@ -8,11 +9,24 @@ import { addItem } from '../features/cart/cartSlice';
 import { useGetProductQuery } from '../services/shopService';
 
 
+
 const ProductScreen = ({ route, navigation }) => {
     //const [productFound, setProductFound] = useState({})
 
+    
+
+    const addToCart = () => {
+        Toast.show({
+            type: 'success',
+            text1: 'Product added to the cart',
+            visibilityTime: 2000, // Duración en milisegundos
+            position: 'bottom',
+        });
+        dispatch(addItem({ ...productFound, quantity: 1 }))
+    }
+
     //const productId = route.params
-    const productId = useSelector(state=>state.shopReducer.value.productId)
+    const productId = useSelector(state => state.shopReducer.value.productId)
     console.log(productId)
 
     const { width, height } = useWindowDimensions()
@@ -53,7 +67,7 @@ const ProductScreen = ({ route, navigation }) => {
 
                             <View style={styles.tagsContainer}>
                                 {
-                                    productFound.discount > 0 && <View style={styles.discount}><Text style={styles.discountText}>- {productFound.discount} %</Text></View>
+                                    productFound.discount > 0 && <View style={styles.discount}><Text style={styles.discountText}>Discount: - {productFound.discount} %</Text></View>
                                 }
                             </View>
                             {
@@ -63,10 +77,13 @@ const ProductScreen = ({ route, navigation }) => {
                             <Pressable
                                 style={({ pressed }) => [{ opacity: pressed ? 0.95 : 1 }, styles.addToCartButton]}
                                 //style={styles.addToCartButton} 
-                                onPress={() => dispatch(addItem({ ...productFound, quantity: 1 }))}>
+                                //onPress={() => dispatch(addItem({ ...productFound, quantity: 1 }))}>
+                                onPress={addToCart}>
                                 <Text style={styles.textAddToCart}>Add to cart</Text>
                             </Pressable>
+                            <Toast />
                         </ScrollView>
+                        
             }
         </>
     )
@@ -121,7 +138,11 @@ const styles = StyleSheet.create({
         height: 64,
         //padding: 8,
         borderRadius: 64,
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
         //alignSelf: 'flex-start',
+        //alignSelf: 'center',
     },
     discountText: {
         color: colors.blanco,
@@ -129,7 +150,9 @@ const styles = StyleSheet.create({
         top:16,
         left: 16, */
         textAlign: 'center',
-        verticalAlign: 'center'
+        verticalAlign: 'bottom',
+        fontSize: 25,
+        fontWeight: "bold"
     },
     noStockText: {
         color: 'red'
@@ -143,7 +166,7 @@ const styles = StyleSheet.create({
     addToCartButton: {
         padding: 8,
         paddingHorizontal: 16,
-        backgroundColor: colors.morado,
+        backgroundColor: colors.moradoClaro,
         borderRadius: 16,
         marginVertical: 16
     },

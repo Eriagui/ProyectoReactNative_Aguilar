@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator()
 const MyPlacesNavigator = ()=>(
     <Stack.Navigator 
     screenOptions={{
-        header: ({ route }) => (<Header title="Mundo Geek" subtitle={route.name} />)
+        header: ({ route }) => (<Header title="Erick's Store" subtitle={route.name} />)
     }}>
         <Stack.Screen name="My Addresses" component={MyPlacesScreen} />
     </Stack.Navigator>

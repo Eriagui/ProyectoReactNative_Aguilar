@@ -19,7 +19,7 @@ const Header = ({ subtitle }) => {
 
   return (
     <View style={styles.headerContainer}>
-      <Text style={styles.title}>Mundo Geek</Text>
+      <Text style={styles.title}>Erick's Store</Text>
       <MontserratText style={styles.subtitle}>{subtitle}</MontserratText>
       {
         user &&  <Pressable onPress={onLogout} style={styles.access}><Icon name="logout" size={16} color="#fff" /></Pressable>
@@ -39,10 +39,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.grisOscuro
   },
   title: {
-    fontSize: 24,
+    fontSize: 40,
     //fontWeight: 'bold',
     color: colors.amarillo,
-    fontFamily: 'PressStart2P'
+    fontFamily: 'Roboto'
   },
   subtitle: {
     fontSize: 18,

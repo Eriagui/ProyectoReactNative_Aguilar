@@ -7,6 +7,7 @@ import { useDispatch } from 'react-redux';
 import { useLoginMutation } from '../../services/authService';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { insertSession, clearSessions } from '../../db';
+import Toast from 'react-native-toast-message';
 
 const textInputWidth = Dimensions.get('window').width * 0.7
 
@@ -54,6 +55,15 @@ const LoginScreen = ({ navigation }) => {
                     .catch(error => console.log("Error al insertar usuario", error))
             }
 
+        } 
+        
+        if (!result.isSuccess) {
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to log in',
+                text2: 'Please try again',
+                visibilityTime: 2000, // Duración en milisegundos
+            });
         }
     }, [result, rememberMe])
 
@@ -64,7 +74,8 @@ const LoginScreen = ({ navigation }) => {
 
     return (
         <LinearGradient
-            colors={['#400962', '#11001B']}
+            //colors={['#400962', '#11001B']}
+            colors={['rgba(0,0,0,0.8)', 'rgba(60,60,60,0.8)']}
             start={{ x: 0, y: 0 }} // esquina superior izquierda
             end={{ x: 1, y: 1 }}   // esquina inferior derecha
             style={styles.gradient}
@@ -92,7 +103,7 @@ const LoginScreen = ({ navigation }) => {
                 {
                     rememberMe
                         ?
-                        <Pressable onPress={() => setRememberMe(!rememberMe)}><Icon name="toggle-on" size={48} color={colors.verdeNeon} /></Pressable>
+                        <Pressable onPress={() => setRememberMe(!rememberMe)}><Icon name="toggle-on" size={48} color={colors.amarillo} /></Pressable>
                         :
                         <Pressable onPress={() => setRememberMe(!rememberMe)}><Icon name="toggle-off" size={48} color={colors.grisClaro} /></Pressable>
                 }
@@ -107,7 +118,7 @@ const LoginScreen = ({ navigation }) => {
                             ...styles.underLineText
                         }
                     }>
-                        Crea una
+                        Sign up
                     </Text>
                 </Pressable>
             </View>
@@ -120,6 +131,7 @@ const LoginScreen = ({ navigation }) => {
                     <Text style={{ ...styles.whiteText, ...styles.strongText }}>Continue as guess</Text>
                 </Pressable>
             </View>
+            <Toast />
         </LinearGradient>
     )
 }
@@ -133,14 +145,15 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     title: {
-        color: colors.verdeNeon,
-        fontFamily: "PressStart2P",
-        fontSize: 24
+        color: colors.amarillo,
+        //fontFamily: "PressStart2P",
+        fontFamily: "Roboto",
+        fontSize: 40
     },
     subTitle: {
         fontFamily: "Montserrat",
         fontSize: 18,
-        color: colors.amarillo,
+        color: colors.blanco,
         fontWeight: '700',
         letterSpacing: 3
     },
@@ -176,7 +189,7 @@ const styles = StyleSheet.create({
     btn: {
         padding: 16,
         paddingHorizontal: 32,
-        backgroundColor: colors.morado,
+        backgroundColor: colors.moradoClaro,
         borderRadius: 16,
         marginTop: 32
     },

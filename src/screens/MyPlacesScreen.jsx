@@ -58,6 +58,7 @@ const MyPlacesScreen = () => {
 
 
     const getLocation = async () => {
+        showToast("info", "Location is being found.")
         const permissionOk = await getPermissions()
         if (!permissionOk) {
             setErrorMsg('Permission to access location was denied');
@@ -86,6 +87,7 @@ const MyPlacesScreen = () => {
 
     const savePlace = () => {
         if (location && title) {
+            showToast("info", "Your location is being added")
             setPlaces(prevState => [...prevState, { "id": Math.random(), title, "coords": { "latitude": location.latitude, "longitude": location.longitude }, "address": address }])
             setTitle("")
             setLocation("")

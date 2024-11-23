@@ -7,9 +7,9 @@ const Stack = createNativeStackNavigator()
 const ProfileNavigator = ()=>(
     <Stack.Navigator 
     screenOptions={{
-        header: ({ route }) => (<Header title="Mundo Geek" subtitle={route.name} />)
+        header: ({ route }) => (<Header title="Erick's Store" subtitle={route.name} />)
     }}>
-        <Stack.Screen name="Perfil" component={ProfileScreen} />
+        <Stack.Screen name="Your Profile" component={ProfileScreen} />
     </Stack.Navigator>
 )
 

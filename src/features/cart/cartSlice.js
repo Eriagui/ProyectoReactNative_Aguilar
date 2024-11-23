@@ -38,7 +38,7 @@ export const cartSlice = createSlice({
 
         },
         removeItem: (state,action)=>{
-            state.value.cartItems = state.value.cartItems.filter(item=item.id!==action.payload)
+            state.value.cartItems = state.value.cartItems.filter((item_f) => item_f.id!==action.payload.id)
             state.value.total = calculate_total_price(state.value.cartItems)
             state.value.cartLenght -= 1
 
