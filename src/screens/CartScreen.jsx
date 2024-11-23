@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { usePostReceiptMutation } from '../services/receiptsService'
 import { clearCart } from '../features/cart/cartSlice'
-import { removeItem } from '../features/cart/cartSlice';
+import { removeItem, addItem, deductItem } from '../features/cart/cartSlice';
 
 const CartScreen = ({ navigation }) => {
 
@@ -53,13 +53,24 @@ const CartScreen = ({ navigation }) => {
                 <Text style={styles.price}>Price per unit: $ {item.price}</Text>
                 <Text stlyle={styles.quantity}>Quantity: {item.quantity}</Text>
                 <Text style={styles.total}>Total: $ {item.quantity * item.price}</Text>
-                <Pressable
-                    //onPress={removeFromCart(item)}
-                    onPress={() => dispatch(removeItem(item))}
-                    //onPress = {() => console.log({item})}
+                <View style={styles.cartSymbols}>
+                    <Pressable
+                        onPress={() => dispatch(deductItem(item))}
                     >
-                    <Icon name="delete" size={24} color="#FC7A5E" style={styles.trashIcon} />
-                </Pressable>
+                        <Icon name="remove-circle" size={24} color="#FC7A5E" style={styles.minusIcon} />
+                    </Pressable>
+                    <Pressable
+                        onPress={() => dispatch(addItem(item))}
+                    >
+                        <Icon name="add-circle" size={24} color="#FC7A5E" style={styles.addIcon} />
+                    </Pressable>
+                    <Pressable
+                        onPress={() => dispatch(removeItem(item))}
+                    >
+                        <Icon name="delete" size={24} color="#FC7A5E" style={styles.trashIcon} />
+                    </Pressable>
+                </View>
+
 
             </View>
         </FlatCard>
@@ -153,6 +164,19 @@ const styles = StyleSheet.create({
     },
     cartEmptyText: {
         fontSize: 16
-    }
+    },
+    cartSymbols: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-end',
+    },
+    addIcon: {
+        flex: 1,
+        marginRight: 10,
+    },
+    minusIcon: {
+        flex: 1,
+        marginRight: 10,
+    },
 
 })

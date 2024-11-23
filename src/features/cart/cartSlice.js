@@ -5,22 +5,22 @@ export const cartSlice = createSlice({
     name: 'cart',
     initialState: {
         value: {
-            cartItems:[],
-            user:"demo",
+            cartItems: [],
+            user: "demo",
             total: null,
-            cartLenght:0,
+            cartLenght: 0,
             updateAt: Date.now().toLocaleString() //unix timestamp
         }
     },
     reducers: {
-        addItem: (state,action)=>{
-            const productInCart = state.value.cartItems.find(item=>item.id===action.payload.id)
-            if(!productInCart){
+        addItem: (state, action) => {
+            const productInCart = state.value.cartItems.find(item => item.id === action.payload.id)
+            if (!productInCart) {
                 state.value.cartItems.push(action.payload) //action.payload es el producto
                 state.value.cartLenght += 1
-            }else{
-                state.value.cartItems.map(item=>{
-                    if(item.id===action.payload.id){
+            } else {
+                state.value.cartItems.map(item => {
+                    if (item.id === action.payload.id) {
                         item.quantity += 1
                         return item
                     }
@@ -32,25 +32,50 @@ export const cartSlice = createSlice({
 
             state.value = {
                 ...state.value,
-                total, 
+                total,
                 updatedAt: new Date().toLocaleString()
             }
 
         },
-        removeItem: (state,action)=>{
-            state.value.cartItems = state.value.cartItems.filter((item_f) => item_f.id!==action.payload.id)
+        removeItem: (state, action) => {
+            state.value.cartItems = state.value.cartItems.filter((item_f) => item_f.id !== action.payload.id)
             state.value.total = calculate_total_price(state.value.cartItems)
             state.value.cartLenght -= 1
 
         },
         clearCart: (state) => {
-            state.value.cartItems=[]
-            state.value.total=null
+            state.value.cartItems = []
+            state.value.total = null
             state.value.cartLenght = 0
+        },
+        deductItem: (state, action) => {
+            const productInCart = state.value.cartItems.find(item => item.id === action.payload.id)
+
+            state.value.cartItems.map(item => {
+                if (item.id === action.payload.id) {
+                    if (item.quantity == 1) {
+                        state.value.cartItems = state.value.cartItems.filter((item_f) => item_f.id !== action.payload.id)
+                        state.value.total = calculate_total_price(state.value.cartItems)
+                        state.value.cartLenght -= 1
+                    } else {
+                        item.quantity -= 1
+                        return item
+                    }
+                }
+            })
+
+            const total = calculate_total_price(state.value.cartItems)
+
+            state.value = {
+                ...state.value,
+                total,
+                updatedAt: new Date().toLocaleString()
+            }
+
         }
     }
 })
 
-export const {addItem, removeItem,clearCart} = cartSlice.actions
+export const { addItem, removeItem, clearCart, deductItem } = cartSlice.actions
 
 export default cartSlice.reducer
