@@ -11,7 +11,7 @@ const CartNavigator = () => {
             header: ({route})=><Header subtitle={route.name}/>
         }}
     >
-        <CartStack.Screen component={CartScreen} name="Your Shopping Cart" />
+        <CartStack.Screen component={CartScreen} name="Shopping Cart" />
     </CartStack.Navigator>
   )
 }
